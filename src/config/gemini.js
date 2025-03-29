@@ -1,43 +1,27 @@
-/*
- * Install the Generative AI SDK
- *
- * $ npm install @google/generative-ai
- */
+async function run(prompt, language) {
+  try {
+    // Step 1: Send prompt to /refine_query API
+    const refineResponse = await fetch("https://api-lp96.onrender.com/generate-recipe/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      mode: "cors", 
+      body: JSON.stringify({ recipe_name: prompt, language_option: language }),
+    });
 
-import {
-  GoogleGenerativeAI,
-  HarmCategory,
-  HarmBlockThreshold,
-} from "@google/generative-ai"
+    if (!refineResponse.ok) throw new Error("Failed to get refined query");
+    const refineData = await refineResponse.json();
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-const genAI = new GoogleGenerativeAI(apiKey)
+   
 
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-})
+    console.log(refineData.recipe)
 
-const generationConfig = {
-  temperature: 1,
-  topP: 0.95,
-  topK: 64,
-  maxOutputTokens: 8192,
-  responseMimeType: "text/plain",
+    // Return formatted response
+    return refineData.recipe;
+
+  } catch (error) {
+    console.error("Error fetching responses:", error);
+    return "❌ An error occurred while fetching responses.";
+  }
 }
 
-async function run(prompt) {
-  const chatSession = model.startChat({
-    generationConfig,
-    // safetySettings: Adjust safety settings
-    // See https://ai.google.dev/gemini-api/docs/safety-settings
-    history: [],
-  })
-
-  const result = await chatSession.sendMessage(prompt)
-  const response = result.response.text()
-  console.log(result.response.text())
-
-  return response
-}
-
-export default run
+export default run;

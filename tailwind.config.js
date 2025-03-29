@@ -20,6 +20,7 @@ export default {
       animation: {
         "scroll-bg": "scrollBackground 5s linear infinite",
         fadeIn: "fadeIn 1s ease-in-out",
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
